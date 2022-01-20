@@ -34,6 +34,7 @@ export function RegisterLoginData() {
   const {
     control,
     handleSubmit,
+    reset,
     formState: {
       errors
     }
@@ -48,8 +49,19 @@ export function RegisterLoginData() {
     }
 
     const dataKey = '@savepass:logins';
-
+    const data = await AsyncStorage.getItem(dataKey);
+    const currentData = data ? JSON.parse(data): [];
+    
+    const dataFormated = [
+      ...currentData,
+      newLoginData
+    ]
+    
+    await AsyncStorage.setItem(dataKey, JSON.stringify(dataFormated));
     // Save data on AsyncStorage and navigate to 'Home' screen
+
+    reset();
+    navigate('Home');
   }
 
   return (
@@ -66,8 +78,7 @@ export function RegisterLoginData() {
             title="Nome do serviço"
             name="service_name"
             error={
-              // Replace here with real content
-              'Has error ? show error message'
+              errors.service_name && errors.service_name.message
             }
             control={control}
             autoCapitalize="sentences"
@@ -78,8 +89,7 @@ export function RegisterLoginData() {
             title="E-mail"
             name="email"
             error={
-              // Replace here with real content
-              'Has error ? show error message'
+             errors.email && errors.email.message
             }
             control={control}
             autoCorrect={false}
@@ -91,8 +101,7 @@ export function RegisterLoginData() {
             title="Senha"
             name="password"
             error={
-              // Replace here with real content
-              'Has error ? show error message'
+              errors.password && errors.password.message
             }
             control={control}
             secureTextEntry
@@ -100,7 +109,7 @@ export function RegisterLoginData() {
 
           <Button
             style={{
-              marginTop: RFValue(8)
+              marginTop: RFValue(8),
             }}
             title="Salvar"
             onPress={handleSubmit(handleRegister)}
@@ -108,5 +117,5 @@ export function RegisterLoginData() {
         </Form>
       </Container>
     </KeyboardAvoidingView>
-  )
+  );
 }
